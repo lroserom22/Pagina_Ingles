@@ -1,25 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <center><h1>Palabras en Ingles</h1></center>
     <style>
-        /* Estilo para el título */
-        #title {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 14px 0;
-            font-size: 24px;
-            font-weight: bold; /* Texto en negrita */
-        }
-
         /* Estilo para el menú horizontal */
         #menu {
-            position: fixed;
-            top: 40px; /* Altura del título + espacio */
-            width: 100%;
             background-color: #333;
             overflow: hidden;
         }
@@ -38,126 +23,89 @@
             color: black;
         }
 
-        /* Agregar un margen superior al cuerpo para evitar que el contenido se superponga debajo del título y el menú fijo */
-        body {
-            margin-top: 80px; /* Altura del título + espacio + altura del menú + espacio */
-        }
-
         /* Estilo para las palabras del examen */
         #examenWord {
             font-size: 24px;
-            font-weight: bold; /* Texto en negrita */
+            font-weight: bold;
         }
 
         /* Estilo para el texto dentro de los elementos <p> */
         #examenEnglish, #examenPronunciation {
             font-size: 24px; /* Tamaño de fuente más grande */
-            font-weight: bold; /* Texto en negrita */
         }
     </style>
 </head>
 <body>
-    <div id="title">
-        <h1>Palabras en Ingles</h1>
-    </div>
     <div id="menu">
         <a href="index.html">Inicio</a>
         <a href="Examen.html">Examen</a>
     </div>
-    <!-- Sección para agregar palabras -->
-    <h2>Agregar Palabra</h2>
-    <input type="text" id="spanishWord" placeholder="Palabra en Español">
-    <input type="text" id="englishWord" placeholder="Escritura en Inglés">
-    <input type="text" id="pronunciation" placeholder="Pronunciación">
-    <input type="text" id="imageURL" placeholder="URL de la Imagen">
-    <button onclick="agregarPalabra()">Agregar</button>
-    <ul id="wordList"></ul>
+
+    <h3>Estás Listo, Veremos Lo Que Has Aprendido</h3> 
+    <button onclick="comenzarExamen()">Comenzar Examen</button>
+
+    <div id="examenResult" style="display: none;">
+        <img src="" id="examenImage" alt="" width="300" height="300">
+        <br>
+        <span id="examenWord"></span>
+        <br>
+        <h3>Palabra en Español:</h3>
+        <button onclick="mostrarPronunciacionEscritura()">Mostrar</button>
+        <p id="examenEnglish" style="display: none;"></p>
+        <p id="examenPronunciation" style="display: none;"></p>
+        <button onclick="seguirExamen()">Siguiente</button>
+    </div>
 
     <script>
-        // Cargar palabras al abrir la página
-        cargarPalabras();
+        let storedWords = JSON.parse(localStorage.getItem("words")) || [];
+        let currentWordIndex = -1;
 
-        function cargarPalabras() {
-            const wordList = document.getElementById("wordList");
-            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
-            storedWords.forEach(word => {
-                agregarPalabraALaLista(word);
-            });
-        }
-
-        function agregarPalabraALaLista(word) {
-            const wordList = document.getElementById("wordList");
-            const listItem = document.createElement("li");
-            listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} 
-                <img src="${word.imageURL}" alt="${word.spanish}" width="100" height="100">
-                <button onclick="editarPalabra('${word.spanish}', '${word.english}', '${word.pronunciation}', '${word.imageURL}')">Editar</button>
-                <button onclick="eliminarPalabra(this)">Eliminar</button>`;
-            wordList.appendChild(listItem);
-        }
-
-        function agregarPalabra() {
-            const spanishWord = document.getElementById("spanishWord").value;
-            const englishWord = document.getElementById("englishWord").value;
-            const pronunciation = document.getElementById("pronunciation").value;
-            const imageURL = document.getElementById("imageURL").value;
-
-            if (spanishWord && englishWord && pronunciation && imageURL) {
-                const wordList = document.getElementById("wordList");
-                const storedWords = JSON.parse(localStorage.getItem("words")) || [];
-                const existingWordIndex = storedWords.findIndex(word => word.spanish === spanishWord);
-                
-                if (existingWordIndex !== -1) {
-                    // Si la palabra ya existe, actualiza la información
-                    storedWords[existingWordIndex] = {
-                        spanish: spanishWord,
-                        english: englishWord,
-                        pronunciation: pronunciation,
-                        imageURL: imageURL
-                    };
-                } else {
-                    // Si la palabra no existe, agrégala a la lista
-                    storedWords.push({ spanish: spanishWord, english: englishWord, pronunciation: pronunciation, imageURL: imageURL });
-                }
-
-                // Actualiza la lista en la página
-                if (existingWordIndex !== -1) {
-                    // Si es una actualización, reemplaza el elemento existente
-                    const existingListItem = wordList.getElementsByTagName("li")[existingWordIndex];
-                    existingListItem.innerHTML = `${spanishWord} - ${englishWord} - ${pronunciation} 
-                        <img src="${imageURL}" alt="${spanishWord}" width="100" height="100">
-                        <button onclick="editarPalabra('${spanishWord}', '${englishWord}', '${pronunciation}', '${imageURL}')">Editar</button>
-                        <button onclick="eliminarPalabra(this)">Eliminar</button>`;
-                } else {
-                    // Si es una nueva palabra, agrégala a la lista
-                    agregarPalabraALaLista({ spanish: spanishWord, english: englishWord, pronunciation: pronunciation, imageURL: imageURL });
-                }
-
-                // Guardar en almacenamiento local
-                localStorage.setItem("words", JSON.stringify(storedWords));
-
-                // Limpiar campos de entrada
-                document.getElementById("spanishWord").value = "";
-                document.getElementById("englishWord").value = "";
-                document.getElementById("pronunciation").value = "";
-                document.getElementById("imageURL").value = "";
+        function comenzarExamen() {
+            if (storedWords.length === 0) {
+                alert("No hay palabras en la lista.");
+                return;
             }
+            currentWordIndex = getRandomIndex(storedWords);
+            mostrarPalabra();
         }
 
-        function editarPalabra(spanishWord, englishWord, pronunciation, imageURL) {
-            document.getElementById("spanishWord").value = spanishWord;
-            document.getElementById("englishWord").value = englishWord;
-            document.getElementById("pronunciation").value = pronunciation;
-            document.getElementById("imageURL").value = imageURL;
+        function mostrarPalabra() {
+            const examenWord = document.getElementById("examenWord");
+            const examenImage = document.getElementById("examenImage");
+            const examenResult = document.getElementById("examenResult");
+
+            examenImage.src = storedWords[currentWordIndex].imageURL;
+            examenImage.alt = storedWords[currentWordIndex].spanish;
+            examenResult.style.display = "block";
+
+            examenWord.textContent = storedWords[currentWordIndex].spanish;
         }
 
-        function eliminarPalabra(buttonElement) {
-            const wordList = document.getElementById("wordList");
-            const listItem = buttonElement.parentElement;
-            const spanishWord = listItem.firstChild.textContent.split(' - ')[0];
-            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
-            const updatedWords = storedWords.filter(word => word.spanish !== spanishWord);
-            localStorage.setItem("words", JSON.stringify(updatedWords));
-            wordList.removeChild(listItem);
+        function mostrarPronunciacionEscritura() {
+            const examenEnglish = document.getElementById("examenEnglish");
+            const examenPronunciation = document.getElementById("examenPronunciation");
+
+            examenEnglish.textContent = "Escritura en Inglés: " + storedWords[currentWordIndex].english;
+            examenPronunciation.textContent = "Pronunciación: " + storedWords[currentWordIndex].pronunciation;
+
+            examenEnglish.style.display = "block";
+            examenPronunciation.style.display = "block";
+        }
+
+        function seguirExamen() {
+            currentWordIndex = getRandomIndex(storedWords);
+            const examenEnglish = document.getElementById("examenEnglish");
+            const examenPronunciation = document.getElementById("examenPronunciation");
+
+            examenEnglish.style.display = "none";
+            examenPronunciation.style.display = "none";
+
+            mostrarPalabra();
+        }
+
+        function getRandomIndex(array) {
+            const max = array.length;
+            return Math.floor(Math.random() * max);
         }
     </script>
 </body>
