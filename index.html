@@ -39,6 +39,22 @@
     <ul id="wordList"></ul>
 
     <script>
+        // Cargar palabras al abrir la página
+        cargarPalabras();
+
+        function cargarPalabras() {
+            const wordList = document.getElementById("wordList");
+            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+            storedWords.forEach(word => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} 
+                    <img src="${word.imageURL}" alt="${word.spanish}" width="100" height="100">
+                    <button onclick="editarPalabra(this)">Editar</button>
+                    <button onclick="eliminarPalabra(this)">Eliminar</button>`;
+                wordList.appendChild(listItem);
+            });
+        }
+
         function agregarPalabra() {
             const spanishWord = document.getElementById("spanishWord").value;
             const englishWord = document.getElementById("englishWord").value;
