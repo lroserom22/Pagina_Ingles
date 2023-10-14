@@ -31,11 +31,13 @@
     </div>
 
     <h3>Estas Listo Veremos Que has Aprendido</h3> 
-    
     <button onclick="comenzarExamen()">Comenzar Examen</button>
 
     <div id="examenResult" style="display: none;">
-        <p>Palabra: <span id="examenWord"></span></p>
+        <h3>Palabra:</h3>
+        <span id="examenWord"></span>
+        <br>
+        <img src="" id="examenImage" alt="" width="200" height="150">
         <button onclick="mostrarPronunciacionEscritura()">Mostrar</button>
         <p id="examenEnglish" style="display: none;"></p>
         <p id="examenPronunciation" style="display: none;"></p>
@@ -43,52 +45,55 @@
     </div>
 
     <script>
-    let storedWords = JSON.parse(localStorage.getItem("words")) || [];
-    let currentWordIndex = -1;
+        let storedWords = JSON.parse(localStorage.getItem("words")) || [];
+        let currentWordIndex = -1;
 
-    function comenzarExamen() {
-        if (storedWords.length === 0) {
-            alert("No hay palabras en la lista.");
-            return;
+        function comenzarExamen() {
+            if (storedWords.length === 0) {
+                alert("No hay palabras en la lista.");
+                return;
+            }
+            currentWordIndex = getRandomIndex(storedWords);
+            mostrarPalabra();
         }
-        currentWordIndex = getRandomIndex(storedWords);
-        mostrarPalabra();
-    }
 
-    function mostrarPalabra() {
-        const examenWord = document.getElementById("examenWord");
-        const examenResult = document.getElementById("examenResult");
+        function mostrarPalabra() {
+            const examenWord = document.getElementById("examenWord");
+            const examenImage = document.getElementById("examenImage");
+            const examenResult = document.getElementById("examenResult");
 
-        examenWord.textContent = storedWords[currentWordIndex].spanish;
-        examenResult.style.display = "block";
-    }
+            examenWord.textContent = storedWords[currentWordIndex].spanish;
+            examenImage.src = storedWords[currentWordIndex].imageURL;
+            examenImage.alt = storedWords[currentWordIndex].spanish;
+            examenResult.style.display = "block";
+        }
 
-    function mostrarPronunciacionEscritura() {
-        const examenEnglish = document.getElementById("examenEnglish");
-        const examenPronunciation = document.getElementById("examenPronunciation");
+        function mostrarPronunciacionEscritura() {
+            const examenEnglish = document.getElementById("examenEnglish");
+            const examenPronunciation = document.getElementById("examenPronunciation");
 
-        examenEnglish.textContent = "Escritura en Inglés: " + storedWords[currentWordIndex].english;
-        examenPronunciation.textContent = "Pronunciación: " + storedWords[currentWordIndex].pronunciation;
+            examenEnglish.textContent = "Escritura en Inglés: " + storedWords[currentWordIndex].english;
+            examenPronunciation.textContent = "Pronunciación: " + storedWords[currentWordIndex].pronunciation;
 
-        examenEnglish.style.display = "block";
-        examenPronunciation.style.display = "block";
-    }
+            examenEnglish.style.display = "block";
+            examenPronunciation.style.display = "block";
+        }
 
-    function seguirExamen() {
-        currentWordIndex = getRandomIndex(storedWords);
-        const examenEnglish = document.getElementById("examenEnglish");
-        const examenPronunciation = document.getElementById("examenPronunciation");
+        function seguirExamen() {
+            currentWordIndex = getRandomIndex(storedWords);
+            const examenEnglish = document.getElementById("examenEnglish");
+            const examenPronunciation = document.getElementById("examenPronunciation");
 
-        examenEnglish.style.display = "none";
-        examenPronunciation.style.display = "none";
+            examenEnglish.style.display = "none";
+            examenPronunciation.style.display = "none";
 
-        mostrarPalabra();
-    }
+            mostrarPalabra();
+        }
 
-    function getRandomIndex(array) {
-        const max = array.length;
-        return Math.floor(Math.random() * max);
-    }
-</script>
+        function getRandomIndex(array) {
+            const max = array.length;
+            return Math.floor(Math.random() * max);
+        }
+    </script>
 </body>
 </html>
