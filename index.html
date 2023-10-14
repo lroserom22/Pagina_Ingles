@@ -5,23 +5,14 @@
 </head>
 <body>
     <h1>Palabras en Español</h1>
+    
+    <!-- Sección para agregar palabras -->
     <h2>Agregar Palabra</h2>
     <input type="text" id="spanishWord" placeholder="Palabra en Español">
     <input type="text" id="englishWord" placeholder="Escritura en Inglés">
     <input type="text" id="pronunciation" placeholder="Pronunciación">
     <button onclick="agregarPalabra()">Agregar</button>
-
-    <h2>Lista de Palabras</h2>
     <ul id="wordList"></ul>
-
-    <h2>Examen</h2>
-    <button onclick="empezarExamen()">Comenzar Examen</button>
-    <div id="examenResult" style="display: none;">
-        <p>Palabra: <span id="examenWord"></span></p>
-        <button onclick="mostrarPronunciacionEscritura()">Mostrar</button>
-        <p id="examenEnglish" style="display: none;"></p>
-        <p id="examenPronunciation" style="display: none;"></p>
-    </div>
 
     <script>
         function agregarPalabra() {
@@ -71,36 +62,6 @@
             const updatedWords = storedWords.filter(word => word.spanish !== spanishWord);
             localStorage.setItem("words", JSON.stringify(updatedWords));
             listItem.remove();
-        }
-
-        function empezarExamen() {
-            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
-            if (storedWords.length === 0) {
-                alert("No hay palabras en la lista.");
-                return;
-            }
-            const randomIndex = Math.floor(Math.random() * storedWords.length);
-            const word = storedWords[randomIndex];
-            const examenResult = document.getElementById("examenResult");
-            const examenWord = document.getElementById("examenWord");
-            const examenEnglish = document.getElementById("examenEnglish");
-            const examenPronunciation = document.getElementById("examenPronunciation");
-            
-            examenWord.textContent = word.spanish;
-            examenEnglish.style.display = "none";
-            examenPronunciation.style.display = "none";
-            
-            examenResult.style.display = "block";
-        }
-
-        function mostrarPronunciacionEscritura() {
-            const examenEnglish = document.getElementById("examenEnglish");
-            const examenPronunciation = document.getElementById("examenPronunciation");
-            examenEnglish.textContent = "Escritura en Inglés: " + word.english;
-            examenPronunciation.textContent = "Pronunciación: " + word.pronunciation;
-            
-            examenEnglish.style.display = "block";
-            examenPronunciation.style.display = "block";
         }
 
         function guardarCambios() {
