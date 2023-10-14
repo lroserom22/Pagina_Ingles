@@ -31,7 +31,9 @@
 
             // Crear un nuevo elemento de lista con los datos ingresados
             var li = document.createElement("li");
-            li.textContent = "Palabra: " + word + " | Forma de escribir: " + spelling + " | Pronunciación: " + pronunciation;
+            li.innerHTML = "Palabra: " + word + " | Forma de escribir: " + spelling + " | Pronunciación: " + pronunciation +
+                ' <button onclick="editarPalabra(this)">Editar</button>' +
+                ' <button onclick="borrarPalabra(this)">Borrar</button>';
 
             // Agregar el elemento de lista a la lista de palabras guardadas
             document.getElementById("wordList").appendChild(li);
@@ -40,6 +42,27 @@
             document.getElementById("word").value = "";
             document.getElementById("spelling").value = "";
             document.getElementById("pronunciation").value = "";
+        }
+
+        function editarPalabra(button) {
+            var li = button.parentNode;
+            var elements = li.querySelectorAll("span");
+            var word = elements[0].textContent.replace("Palabra: ", "");
+            var spelling = elements[1].textContent.replace("Forma de escribir: ", "");
+            var pronunciation = elements[2].textContent.replace("Pronunciación: ", "");
+
+            // Poblar el formulario con los valores existentes para editar
+            document.getElementById("word").value = word;
+            document.getElementById("spelling").value = spelling;
+            document.getElementById("pronunciation").value = pronunciation;
+
+            // Eliminar la palabra de la lista
+            li.remove();
+        }
+
+        function borrarPalabra(button) {
+            var li = button.parentNode;
+            li.remove();
         }
     </script>
 </body>
