@@ -46,13 +46,18 @@
             const wordList = document.getElementById("wordList");
             const storedWords = JSON.parse(localStorage.getItem("words")) || [];
             storedWords.forEach(word => {
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} 
-                    <img src="${word.imageURL}" alt="${word.spanish}" width="100" height="100">
-                    <button onclick="editarPalabra('${word.spanish}', '${word.english}', '${word.pronunciation}', '${word.imageURL}')">Editar</button>
-                    <button onclick="eliminarPalabra(this)">Eliminar</button>`;
-                wordList.appendChild(listItem);
+                agregarPalabraALaLista(word);
             });
+        }
+
+        function agregarPalabraALaLista(word) {
+            const wordList = document.getElementById("wordList");
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} 
+                <img src="${word.imageURL}" alt="${word.spanish}" width="100" height="100">
+                <button onclick="editarPalabra('${word.spanish}', '${word.english}', '${word.pronunciation}', '${word.imageURL}')">Editar</button>
+                <button onclick="eliminarPalabra(this)">Eliminar</button>`;
+            wordList.appendChild(listItem);
         }
 
         function agregarPalabra() {
@@ -63,26 +68,44 @@
 
             if (spanishWord && englishWord && pronunciation && imageURL) {
                 const wordList = document.getElementById("wordList");
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `${spanishWord} - ${englishWord} - ${pronunciation} 
-                    <img src="${imageURL}" alt="${spanishWord}" width="100" height="100">
-                    <button onclick="editarPalabra('${spanishWord}', '${englishWord}', '${pronunciation}', '${imageURL}')">Editar</button>
-                    <button onclick="eliminarPalabra(this)">Eliminar</button>`;
-                wordList.appendChild(listItem);
+                const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+                const existingWordIndex = storedWords.findIndex(word => word.spanish === spanishWord);
+                
+                if (existingWordIndex !== -1) {
+                    // Si la palabra ya existe, actualiza la información
+                    storedWords[existingWordIndex] = {
+                        spanish: spanishWord,
+                        english: englishWord,
+                        pronunciation: pronunciation,
+                        imageURL: imageURL
+                    };
+                } else {
+                    // Si la palabra no existe, agrégala a la lista
+                    storedWords.push({ spanish: spanishWord, english: englishWord, pronunciation: pronunciation, imageURL: imageURL });
+                }
+
+                // Actualiza la lista en la página
+                if (existingWordIndex !== -1) {
+                    // Si es una actualización, reemplaza el elemento existente
+                    const existingListItem = wordList.getElementsByTagName("li")[existingWordIndex];
+                    existingListItem.innerHTML = `${spanishWord} - ${englishWord} - ${pronunciation} 
+                        <img src="${imageURL}" alt="${spanishWord}" width="100" height="100">
+                        <button onclick="editarPalabra('${spanishWord}', '${englishWord}', '${pronunciation}', '${imageURL}')">Editar</button>
+                        <button onclick="eliminarPalabra(this)">Eliminar</button>`;
+                } else {
+                    // Si es una nueva palabra, agrégala a la lista
+                    agregarPalabraALaLista({ spanish: spanishWord, english: englishWord, pronunciation: pronunciation, imageURL: imageURL });
+                }
+
                 // Guardar en almacenamiento local
-                guardarPalabra(spanishWord, englishWord, pronunciation, imageURL);
+                localStorage.setItem("words", JSON.stringify(storedWords));
+
                 // Limpiar campos de entrada
                 document.getElementById("spanishWord").value = "";
                 document.getElementById("englishWord").value = "";
                 document.getElementById("pronunciation").value = "";
                 document.getElementById("imageURL").value = "";
             }
-        }
-
-        function guardarPalabra(spanishWord, englishWord, pronunciation, imageURL) {
-            let storedWords = JSON.parse(localStorage.getItem("words")) || [];
-            storedWords.push({ spanish: spanishWord, english: englishWord, pronunciation: pronunciation, imageURL: imageURL });
-            localStorage.setItem("words", JSON.stringify(storedWords));
         }
 
         function editarPalabra(spanishWord, englishWord, pronunciation, imageURL) {
