@@ -45,12 +45,12 @@
         function cargarPalabras() {
             const wordList = document.getElementById("wordList");
             const storedWords = JSON.parse(localStorage.getItem("words")) || [];
-            storedWords.forEach(word => {
+            storedWords.forEach((word, index) => {
                 const listItem = document.createElement("li");
                 listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} 
                     <img src="${word.imageURL}" alt="${word.spanish}" width="100" height="100">
-                    <button onclick="editarPalabra(this)">Editar</button>
-                    <button onclick="eliminarPalabra(this)">Eliminar</button>`;
+                    <button onclick="editarPalabra(${index})">Editar</button>
+                    <button onclick="eliminarPalabra(${index})">Eliminar</button>`;
                 wordList.appendChild(listItem);
             });
         }
@@ -65,9 +65,9 @@
                 const wordList = document.getElementById("wordList");
                 const listItem = document.createElement("li");
                 listItem.innerHTML = `${spanishWord} - ${englishWord} - ${pronunciation} 
-                    <img src="${imageURL}" alt="${spanishWord}" width="200" height="200">
-                    <button onclick="editarPalabra(this)">Editar</button>
-                    <button onclick="eliminarPalabra(this)">Eliminar</button>`;
+                    <img src="${imageURL}" alt="${spanishWord}" width="100" height="100">
+                    <button onclick="editarPalabra(${wordList.children.length})">Editar</button>
+                    <button onclick="eliminarPalabra(${wordList.children.length})">Eliminar</button>`;
                 wordList.appendChild(listItem);
                 // Guardar en almacenamiento local
                 guardarPalabra(spanishWord, englishWord, pronunciation, imageURL);
@@ -83,6 +83,22 @@
             let storedWords = JSON.parse(localStorage.getItem("words")) || [];
             storedWords.push({ spanish: spanishWord, english: englishWord, pronunciation: pronunciation, imageURL: imageURL });
             localStorage.setItem("words", JSON.stringify(storedWords));
+        }
+
+        function editarPalabra(index) {
+            const wordList = document.getElementById("wordList");
+            const listItem = wordList.children[index];
+            // Aquí puedes implementar la lógica para editar la palabra
+            // Por ejemplo, puedes reemplazar el contenido de la listItem con campos de edición.
+            // Asegúrate de actualizar también el almacenamiento local.
+        }
+
+        function eliminarPalabra(index) {
+            const wordList = document.getElementById("wordList");
+            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+            storedWords.splice(index, 1);
+            localStorage.setItem("words", JSON.stringify(storedWords));
+            wordList.removeChild(wordList.children[index]);
         }
     </script>
 </body>
