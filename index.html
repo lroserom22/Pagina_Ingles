@@ -18,8 +18,9 @@
     <button onclick="empezarExamen()">Comenzar Examen</button>
     <div id="examenResult" style="display: none;">
         <p>Palabra: <span id="examenWord"></span></p>
-        <p>Escritura en Inglés: <span id="examenEnglish"></span></p>
-        <p>Pronunciación: <span id="examenPronunciation"></span></p>
+        <button onclick="mostrarPronunciacionEscritura()">Mostrar</button>
+        <p id="examenEnglish" style="display: none;"></p>
+        <p id="examenPronunciation" style="display: none;"></p>
     </div>
 
     <script>
@@ -81,10 +82,25 @@
             const randomIndex = Math.floor(Math.random() * storedWords.length);
             const word = storedWords[randomIndex];
             const examenResult = document.getElementById("examenResult");
-            document.getElementById("examenWord").textContent = word.spanish;
-            document.getElementById("examenEnglish").textContent = word.english;
-            document.getElementById("examenPronunciation").textContent = word.pronunciation;
+            const examenWord = document.getElementById("examenWord");
+            const examenEnglish = document.getElementById("examenEnglish");
+            const examenPronunciation = document.getElementById("examenPronunciation");
+            
+            examenWord.textContent = word.spanish;
+            examenEnglish.style.display = "none";
+            examenPronunciation.style.display = "none";
+            
             examenResult.style.display = "block";
+        }
+
+        function mostrarPronunciacionEscritura() {
+            const examenEnglish = document.getElementById("examenEnglish");
+            const examenPronunciation = document.getElementById("examenPronunciation");
+            examenEnglish.textContent = "Escritura en Inglés: " + word.english;
+            examenPronunciation.textContent = "Pronunciación: " + word.pronunciation;
+            
+            examenEnglish.style.display = "block";
+            examenPronunciation.style.display = "block";
         }
 
         function guardarCambios() {
