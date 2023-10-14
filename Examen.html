@@ -22,6 +22,12 @@
             background-color: #ddd;
             color: black;
         }
+
+        /* Estilo para las palabras del examen */
+        #examenWord {
+            font-size: 24px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -30,18 +36,18 @@
         <a href="Examen.html">Examen</a>
     </div>
 
-    <h3>Estas Listo Veremos Que has Aprendido</h3> 
+    <h3>Estás Listo, Veremos Lo Que Has Aprendido</h3> 
     <button onclick="comenzarExamen()">Comenzar Examen</button>
 
     <div id="examenResult" style="display: none;">
-        <h3>Palabra:</h3>
-        <span id="examenWord"></span>
-        <br>
         <img src="" id="examenImage" alt="" width="300" height="300">
+        <br>
+        <h3>Palabra en Español:</h3>
+        <span id="examenWord"></span>
         <button onclick="mostrarPronunciacionEscritura()">Mostrar</button>
         <p id="examenEnglish" style="display: none;"></p>
         <p id="examenPronunciation" style="display: none;"></p>
-        <button onclick="seguirExamen()">Seguir</button>
+        <button onclick="seguirExamen()">Siguiente</button>
     </div>
 
     <script>
@@ -62,10 +68,11 @@
             const examenImage = document.getElementById("examenImage");
             const examenResult = document.getElementById("examenResult");
 
-            examenWord.textContent = storedWords[currentWordIndex].spanish;
             examenImage.src = storedWords[currentWordIndex].imageURL;
             examenImage.alt = storedWords[currentWordIndex].spanish;
             examenResult.style.display = "block";
+
+            examenWord.textContent = storedWords[currentWordIndex].spanish;
         }
 
         function mostrarPronunciacionEscritura() {
