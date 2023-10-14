@@ -12,7 +12,7 @@
         <label for="spelling">Forma de escribir:</label>
         <input type="text" id="spelling" required>
         
-        <label for="pronunciation">Pronunciación:</label>
+        <label for "pronunciation">Pronunciación:</label>
         <input type="text" id="pronunciation" required>
         
         <button type="button" onclick="guardarPalabra()">Guardar</button>
@@ -24,10 +24,15 @@
     </ul>
 
     <script>
+        var palabrasGuardadas = [];
+
         function guardarPalabra() {
             var word = document.getElementById("word").value;
             var spelling = document.getElementById("spelling").value;
             var pronunciation = document.getElementById("pronunciation").value;
+
+            // Agregar la palabra a la lista de palabras guardadas
+            palabrasGuardadas.push({ word, spelling, pronunciation });
 
             // Crear un nuevo elemento de lista con los datos ingresados
             var li = document.createElement("li");
@@ -46,22 +51,20 @@
 
         function editarPalabra(button) {
             var li = button.parentNode;
-            var elements = li.querySelectorAll("span");
-            var word = elements[0].textContent.replace("Palabra: ", "");
-            var spelling = elements[1].textContent.replace("Forma de escribir: ", "");
-            var pronunciation = elements[2].textContent.replace("Pronunciación: ", "");
+            var index = Array.prototype.indexOf.call(li.parentNode.children, li);
 
-            // Poblar el formulario con los valores existentes para editar
-            document.getElementById("word").value = word;
-            document.getElementById("spelling").value = spelling;
-            document.getElementById("pronunciation").value = pronunciation;
-
-            // Eliminar la palabra de la lista
-            li.remove();
+            var wordData = palabrasGuardadas[index];
+            document.getElementById("word").value = wordData.word;
+            document.getElementById("spelling").value = wordData.spelling;
+            document.getElementById("pronunciation").value = wordData.pronunciation;
         }
 
         function borrarPalabra(button) {
             var li = button.parentNode;
+            var index = Array.prototype.indexOf.call(li.parentNode.children, li);
+            
+            // Eliminar la palabra del array y del DOM
+            palabrasGuardadas.splice(index, 1);
             li.remove();
         }
     </script>
