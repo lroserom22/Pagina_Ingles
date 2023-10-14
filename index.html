@@ -90,13 +90,6 @@
             document.getElementById("englishWord").value = englishWord;
             document.getElementById("pronunciation").value = pronunciation;
             document.getElementById("imageURL").value = imageURL;
-            const wordList = document.getElementById("wordList");
-            const listItem = buttonElement.parentElement;
-            const spanishWord = listItem.firstChild.textContent.split(' - ')[0];
-            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
-            const updatedWords = storedWords.filter(word => word.spanish !== spanishWord);
-            localStorage.setItem("words", JSON.stringify(updatedWords));
-            wordList.removeChild(listItem);
         }
 
         function eliminarPalabra(buttonElement) {
