@@ -32,6 +32,7 @@
         /* Estilo para el texto dentro de los elementos <p> */
         #examenEnglish, #examenPronunciation {
             font-size: 18px; /* Tamaño de fuente más grande */
+            font-weight: bold; /* Texto en negrita */
         }
     </style>
 </head>
@@ -51,8 +52,8 @@
         <br>
         <h3>Palabra en Español:</h3>
         <button onclick="mostrarPronunciacionEscritura()">Mostrar</button>
-        <p id="examenEnglish" style="display: none;"></p>
-        <p id="examenPronunciation" style="display: none;"></p>
+        <p id="examenEnglish" style="display: none; font-weight: normal;"></p>
+        <p id="examenPronunciation" style="display: none; font-weight: normal;"></p>
         <button onclick="seguirExamen()">Siguiente</button>
     </div>
 
