@@ -1,72 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Guardar palabras en español</title>
+    <title>Palabras en Español</title>
 </head>
 <body>
-    <h1>Guardar palabras en español</h1>
-    <form id="wordForm">
-        <label for="word">Palabra:</label>
-        <input type="text" id="word" required>
-        
-        <label for="spelling">Forma de escribir:</label>
-        <input type="text" id="spelling" required>
-        
-        <label for "pronunciation">Pronunciación:</label>
-        <input type="text" id="pronunciation" required>
-        
-        <button type="button" onclick="guardarPalabra()">Guardar</button>
-    </form>
+    <h1>Palabras en Español</h1>
+    <h2>Agregar Palabra</h2>
+    <input type="text" id="spanishWord" placeholder="Palabra en Español">
+    <input type="text" id="englishWord" placeholder="Escritura en Inglés">
+    <input type="text" id="pronunciation" placeholder="Pronunciación">
+    <button onclick="agregarPalabra()">Agregar</button>
 
-    <h2>Palabras guardadas</h2>
-    <ul id="wordList">
-        <!-- Aquí se mostrarán las palabras guardadas -->
-    </ul>
+    <h2>Lista de Palabras</h2>
+    <ul id="wordList"></ul>
+
+    <h2>Examen</h2>
+    <button onclick="empezarExamen()">Comenzar Examen</button>
+    <div id="examenResult" style="display: none;">
+        <p>Palabra: <span id="examenWord"></span></p>
+        <p>Escritura en Inglés: <span id="examenEnglish"></span></p>
+        <p>Pronunciación: <span id="examenPronunciation"></span></p>
+    </div>
 
     <script>
-        var palabrasGuardadas = [];
-
-        function guardarPalabra() {
-            var word = document.getElementById("word").value;
-            var spelling = document.getElementById("spelling").value;
-            var pronunciation = document.getElementById("pronunciation").value;
-
-            // Agregar la palabra a la lista de palabras guardadas
-            palabrasGuardadas.push({ word, spelling, pronunciation });
-
-            // Crear un nuevo elemento de lista con los datos ingresados
-            var li = document.createElement("li");
-            li.innerHTML = "Palabra: " + word + " | Forma de escribir: " + spelling + " | Pronunciación: " + pronunciation +
-                ' <button onclick="editarPalabra(this)">Editar</button>' +
-                ' <button onclick="borrarPalabra(this)">Borrar</button>';
-
-            // Agregar el elemento de lista a la lista de palabras guardadas
-            document.getElementById("wordList").appendChild(li);
-
-            // Limpiar los campos del formulario
-            document.getElementById("word").value = "";
-            document.getElementById("spelling").value = "";
-            document.getElementById("pronunciation").value = "";
+        function agregarPalabra() {
+            const spanishWord = document.getElementById("spanishWord").value;
+            const englishWord = document.getElementById("englishWord").value;
+            const pronunciation = document.getElementById("pronunciation").value;
+            if (spanishWord && englishWord && pronunciation) {
+                const wordList = document.getElementById("wordList");
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${spanishWord} - ${englishWord} - ${pronunciation} [<a href="#" onclick="editarPalabra(this)">Editar</a> | <a href="#" onclick="eliminarPalabra(this)">Eliminar</a>]`;
+                wordList.appendChild(listItem);
+                // Guardar en almacenamiento local
+                guardarPalabra(spanishWord, englishWord, pronunciation);
+                // Limpiar campos de entrada
+                document.getElementById("spanishWord").value = "";
+                document.getElementById("englishWord").value = "";
+                document.getElementById("pronunciation").value = "";
+            }
         }
 
-        function editarPalabra(button) {
-            var li = button.parentNode;
-            var index = Array.prototype.indexOf.call(li.parentNode.children, li);
-
-            var wordData = palabrasGuardadas[index];
-            document.getElementById("word").value = wordData.word;
-            document.getElementById("spelling").value = wordData.spelling;
-            document.getElementById("pronunciation").value = wordData.pronunciation;
+        function guardarPalabra(spanishWord, englishWord, pronunciation) {
+            let storedWords = JSON.parse(localStorage.getItem("words")) || [];
+            storedWords.push({ spanish: spanishWord, english: englishWord, pronunciation: pronunciation });
+            localStorage.setItem("words", JSON.stringify(storedWords));
         }
 
-        function borrarPalabra(button) {
-            var li = button.parentNode;
-            var index = Array.prototype.indexOf.call(li.parentNode.children, li);
-            
-            // Eliminar la palabra del array y del DOM
-            palabrasGuardadas.splice(index, 1);
-            li.remove();
+        function editarPalabra(link) {
+            const listItem = link.parentNode;
+            const words = listItem.innerText.split(" - ");
+            const spanishWord = words[0];
+            const englishWord = words[1];
+            const pronunciation = words[2];
+            document.getElementById("spanishWord").value = spanishWord;
+            document.getElementById("englishWord").value = englishWord;
+            document.getElementById("pronunciation").value = pronunciation;
+            listItem.remove();
+            guardarCambios();
         }
+
+        function eliminarPalabra(link) {
+            const listItem = link.parentNode;
+            const words = listItem.innerText.split(" - ");
+            const spanishWord = words[0];
+            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+            const updatedWords = storedWords.filter(word => word.spanish !== spanishWord);
+            localStorage.setItem("words", JSON.stringify(updatedWords));
+            listItem.remove();
+        }
+
+        function empezarExamen() {
+            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+            if (storedWords.length === 0) {
+                alert("No hay palabras en la lista.");
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * storedWords.length);
+            const word = storedWords[randomIndex];
+            const examenResult = document.getElementById("examenResult");
+            document.getElementById("examenWord").textContent = word.spanish;
+            document.getElementById("examenEnglish").textContent = word.english;
+            document.getElementById("examenPronunciation").textContent = word.pronunciation;
+            examenResult.style.display = "block";
+        }
+
+        function guardarCambios() {
+            const spanishWords = Array.from(document.querySelectorAll("#wordList li")).map(item => {
+                const words = item.innerText.split(" - ");
+                return {
+                    spanish: words[0],
+                    english: words[1],
+                    pronunciation: words[2],
+                };
+            });
+            localStorage.setItem("words", JSON.stringify(spanishWords));
+        }
+
+        // Cargar palabras al abrir la página
+        window.onload = function() {
+            const storedWords = JSON.parse(localStorage.getItem("words")) || [];
+            const wordList = document.getElementById("wordList");
+            storedWords.forEach(word => {
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} [<a href="#" onclick="editarPalabra(this)">Editar</a> | <a href="#" onclick="eliminarPalabra(this)">Eliminar</a>]`;
+                wordList.appendChild(listItem);
+            });
+        };
     </script>
 </body>
 </html>
