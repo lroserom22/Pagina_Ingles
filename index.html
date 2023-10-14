@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PALABRAS EN ESPAÑOL</title>
+    <title>Palabras en Español</title>
 </head>
 <body>
     <h1>Palabras en Español</h1>
@@ -30,7 +30,9 @@
             if (spanishWord && englishWord && pronunciation) {
                 const wordList = document.getElementById("wordList");
                 const listItem = document.createElement("li");
-                listItem.innerHTML = `${spanishWord} - ${englishWord} - ${pronunciation} [<a href="#" onclick="editarPalabra(this)">Editar</a> | <a href="#" onclick="eliminarPalabra(this)">Eliminar</a>]`;
+                listItem.innerHTML = `${spanishWord} - ${englishWord} - ${pronunciation} 
+                    <button onclick="editarPalabra(this)">Editar</button>
+                    <button onclick="eliminarPalabra(this)">Eliminar</button>`;
                 wordList.appendChild(listItem);
                 // Guardar en almacenamiento local
                 guardarPalabra(spanishWord, englishWord, pronunciation);
@@ -47,8 +49,8 @@
             localStorage.setItem("words", JSON.stringify(storedWords));
         }
 
-        function editarPalabra(link) {
-            const listItem = link.parentNode;
+        function editarPalabra(button) {
+            const listItem = button.parentNode;
             const words = listItem.innerText.split(" - ");
             const spanishWord = words[0];
             const englishWord = words[1];
@@ -60,8 +62,8 @@
             guardarCambios();
         }
 
-        function eliminarPalabra(link) {
-            const listItem = link.parentNode;
+        function eliminarPalabra(button) {
+            const listItem = button.parentNode;
             const words = listItem.innerText.split(" - ");
             const spanishWord = words[0];
             const storedWords = JSON.parse(localStorage.getItem("words")) || [];
@@ -103,7 +105,9 @@
             const wordList = document.getElementById("wordList");
             storedWords.forEach(word => {
                 const listItem = document.createElement("li");
-                listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} [<a href="#" onclick="editarPalabra(this)">Editar</a> | <a href="#" onclick="eliminarPalabra(this)">Eliminar</a>]`;
+                listItem.innerHTML = `${word.spanish} - ${word.english} - ${word.pronunciation} 
+                    <button onclick="editarPalabra(this)">Editar</button>
+                    <button onclick="eliminarPalabra(this)">Eliminar</button>`;
                 wordList.appendChild(listItem);
             });
         };
